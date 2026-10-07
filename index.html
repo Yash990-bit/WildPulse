@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="WildPulse: The zero-signal offline field naturalist and audio companion that gets you off the screen and into the wild.">
+  <title>WildPulse 🍃 Zero-Signal Trail Naturalist</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#122419">
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="forest-glow top-left"></div>
+  <div class="forest-glow bottom-right"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-icon">🍃</div>
+      <div class="brand-text">
+        <h1>WildPulse</h1>
+        <span class="subtitle">Offline Trail Naturalist</span>
+      </div>
+    </div>
+    <div class="status-pill offline-badge" id="networkStatus">
+      <span class="pulse-dot"></span>
+      <span id="networkText">Trail Ready (Offline)</span>
+    </div>
+    <button class="icon-btn" id="openSettingsBtn" title="Audio & API Settings" aria-label="Settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </button>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs" aria-label="Main Navigation">
+    <button class="nav-tab active" data-tab="scanner" id="tabScanner">
+      <span class="tab-icon">🔍</span> Field Lens
+    </button>
+    <button class="nav-tab" data-tab="quest" id="tabQuest">
+      <span class="tab-icon">🎯</span> Touch Grass Quest
+    </button>
+    <button class="nav-tab" data-tab="journal" id="tabJournal">
+      <span class="tab-icon">📓</span> Trail Log
+    </button>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+    
+    <!-- SECTION 1: FIELD LENS & IDENTIFIER -->
+    <section class="tab-content active" id="contentScanner">
+      <!-- Philosophy Banner -->
+      <div class="touch-grass-callout">
+        <span class="callout-icon">🌲</span>
+        <div class="callout-text">
+          <strong>Screen-Minimized Naturalist:</strong> Snap or record your finding, listen to the audio guide through your earbuds, and put your phone in your pocket.
+        </div>
+      </div>
+
+      <!-- Capture Station -->
+      <div class="capture-station">
+        <div class="media-viewfinder" id="viewfinder">
+          <div class="viewfinder-placeholder" id="viewfinderPlaceholder">
+            <div class="reticle-box">
+              <span class="reticle top-l"></span>
+              <span class="reticle top-r"></span>
+              <span class="reticle bot-l"></span>
+              <span class="reticle bot-r"></span>
+              <div class="placeholder-icon">📷</div>
+              <p>Aim at flora, fungi, foliage, or a bird</p>
+            </div>
+          </div>
+          <video id="cameraVideo" autoplay playsinline muted class="camera-stream hidden"></video>
+          <img id="capturedImagePreview" alt="Captured specimen preview" class="captured-preview hidden">
+          <div class="waveform-container hidden" id="audioWaveformContainer">
+            <div class="sound-wave-bars">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+            <p class="listening-text">Listening to trail soundscape...</p>
+          </div>
+        </div>
+
+        <!-- Capture Trigger Controls -->
+        <div class="capture-controls">
+          <label class="action-btn primary" for="imageFileInput">
+            <span class="btn-icon">📸</span>
+            <span class="btn-label">Snap Specimen</span>
+            <input type="file" id="imageFileInput" accept="image/*" capture="environment" class="file-input-hidden">
+          </label>
+
+          <button class="action-btn secondary" id="recordAudioBtn">
+            <span class="btn-icon" id="micIcon">🎙️</span>
+            <span class="btn-label" id="micLabel">Identify Bird / Sound</span>
+          </button>
+        </div>
+
+        <!-- Quick Specimen Presets for instant testing -->
+        <div class="preset-drawer">
+          <span class="preset-label">Quick Trail Presets (Test without hiking):</span>
+          <div class="preset-tags">
+            <button class="preset-chip" data-preset="sugar_maple">🍁 Sugar Maple (Foliage)</button>
+            <button class="preset-chip" data-preset="robin">🐦 American Robin (Songbird)</button>
+            <button class="preset-chip" data-preset="chanterelle">🍄 Golden Chanterelle (Mushroom)</button>
+            <button class="preset-chip" data-preset="white_oak">🍂 White Oak (Tree)</button>
+            <button class="preset-chip" data-preset="monarch">🦋 Monarch Butterfly</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Naturalist Identification Card -->
+      <div class="identification-card hidden" id="idCard">
+        <div class="id-header">
+          <div class="species-taxonomy">
+            <span class="badge category-badge" id="specimenCategory">Flora</span>
+            <h2 class="common-name" id="specimenCommonName">Sugar Maple</h2>
+            <p class="scientific-name" id="specimenSciName">Acer saccharum</p>
+          </div>
+          <div class="confidence-badge">
+            <span class="confidence-val" id="confidenceVal">98%</span>
+            <span class="confidence-lbl">Confidence</span>
+          </div>
+        </div>
+
+        <div class="naturalist-insight" id="naturalistInsight">
+          <p id="insightText">Vibrant orange-red foliage reveals the anthocyanin pigments produced as chlorophyll recedes before winter.</p>
+        </div>
+
+        <!-- Audio Field Narration Bar -->
+        <div class="audio-narration-bar">
+          <button class="audio-play-btn" id="playNarrationBtn" aria-label="Listen to Audio Guide">
+            <span class="play-icon" id="playIcon">🔊</span>
+            <span id="playStatus">Play Audio Naturalist</span>
+          </button>
+          <div class="narration-meta">
+            <span class="voice-badge" id="voiceProviderBadge">Naturalist Voice</span>
+            <span class="duration-badge">~18s audio</span>
+          </div>
+        </div>
+
+        <!-- The "Touch Grass" Pocket Mode CTA -->
+        <div class="pocket-mode-trigger">
+          <button class="pocket-btn" id="enterPocketModeBtn">
+            <span class="pocket-icon">🌲</span>
+            <div class="pocket-btn-copy">
+              <strong>Enter Pocket Mode (Screen Off)</strong>
+              <span>Listen in earbuds and put your device away</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: TOUCH GRASS QUEST -->
+    <section class="tab-content" id="contentQuest">
+      <div class="quest-header">
+        <h2>Fall Foliage & Nature Scavenger</h2>
+        <p>Complete these 5 outdoor encounters to earn the <strong>Autumn Trailwalker Badge</strong>.</p>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="questProgressFill" style="width: 20%;"></div>
+        </div>
+        <span class="progress-text" id="questProgressText">1 of 5 Completed</span>
+      </div>
+
+      <div class="quest-list" id="questList">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- SECTION 3: TRAIL JOURNAL -->
+    <section class="tab-content" id="contentJournal">
+      <div class="journal-header">
+        <div class="journal-title-wrap">
+          <h2>Offline Trail Log</h2>
+          <p>Local sightings saved securely on your device with zero cloud tracking.</p>
+        </div>
+        <button class="export-btn" id="exportLogBtn">📥 Export Markdown</button>
+      </div>
+
+      <div class="journal-entries" id="journalEntries">
+        <!-- Logged entries -->
+      </div>
+    </section>
+  </main>
+
+  <!-- FULLSCREEN POCKET MODE OVERLAY (Touch Grass screen minimizer) -->
+  <div class="pocket-overlay hidden" id="pocketOverlay">
+    <div class="ambient-stars"></div>
+    <div class="pocket-center">
+      <div class="glowing-leaf pulse-slow">🍃</div>
+      <h2 class="pocket-title">You're Touching Grass</h2>
+      <p class="pocket-msg">Audio is playing through your headphones.<br>Keep your eyes on the woods, not the glass.</p>
+      <div class="nature-timer">
+        <span class="timer-label">Outdoor Presence Time</span>
+        <span class="timer-digits" id="outdoorTimer">04:12</span>
+      </div>
+      <button class="wake-screen-btn" id="exitPocketModeBtn">Tap to Wake Screen</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal (ElevenLabs & Options) -->
+  <div class="modal-backdrop hidden" id="settingsModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Trail Settings & Voice</h3>
+        <button class="modal-close" id="closeSettingsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="elevenLabsApiKey">Partner: ElevenLabs API Key (Optional)</label>
+          <input type="password" id="elevenLabsApiKey" placeholder="sk_... (leave blank for local offline voice)">
+          <small>Uses high-clarity naturalist voice profile. If blank, WildPulse uses offline Web Speech API (zero internet required).</small>
+        </div>
+        <div class="form-group">
+          <label for="elevenVoiceSelect">Voice Character</label>
+          <select id="elevenVoiceSelect">
+            <option value="George">George (Calm British Naturalist)</option>
+            <option value="Rachel">Rachel (Trail Botanist)</option>
+            <option value="Adam">Adam (Deep Woods Explorer)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="autoPocketToggle" checked>
+            <span>Auto-launch Pocket Mode immediately after identification</span>
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="vibrateHapticToggle" checked>
+            <span>Haptic feedback pulse on species match</span>
+          </label>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn primary" id="saveSettingsBtn">Save Preferences</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

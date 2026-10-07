@@ -1,0 +1,16 @@
+{
+  "name": "WildPulse: Offline Trail Naturalist",
+  "short_name": "WildPulse",
+  "description": "Zero-signal offline field guide and audio companion for hikers, birders, and nature lovers.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d1811",
+  "theme_color": "#1b382b",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍃</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
